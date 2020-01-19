@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View, TextInput, Button, FlatList, Text } from 'react-native';
 import films from './../helpers/filmsData';
 import FilmItem from './filmItem';
+import Constants from 'expo-constants';
 
 class Search extends Component {
   constructor() {
@@ -15,7 +16,8 @@ class Search extends Component {
           placeholder="Titre du film"
         />
         <Button title="Rechercher" onPress={() => {}} />
-        <FlatList 
+        <FlatList
+          style={styles.flatlist}
           data={films}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({item}) => <FilmItem />}
@@ -37,6 +39,9 @@ const styles = StyleSheet.create({
     borderColor: '#000000',
     borderWidth: 1,
     paddingLeft: 5
+  },
+  flatlist: {
+
   }
 })
 
