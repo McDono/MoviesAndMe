@@ -14,20 +14,26 @@ import { getFilmsWithSearchText } from './../api/tmdbAPI';
 class Search extends Component {
   constructor(props) {
     super(props);
-    this.searchedText = '';
     this.state = {
       films: [],
       isLoading: false
     };
-    let content;
+    this.searchedText = '';
+    this.currentPage = 0;
+    this.totalPage = 0;
   }
 
   _loadFilms() {
     console.log(this.searchedText);
     if (this.searchedText.length > 0) {
       this.setState({ isLoading: true });
-      getFilmsWithSearchText(this.searchedText).then(data => {
-        this.setState({ films: data.results, isLoading: false });
+      getFilmsWithSearchText(this.searchedText, this.page + 1).then(data => {
+        this.currentPage = data.page;
+        this.totalPage = data.total_pages;
+        this.setState({
+          films: [...this.state.films, ...data.results],
+          isLoading: false
+        });
       });
     }
   }
@@ -36,14 +42,9 @@ class Search extends Component {
     this.searchedText = text;
   }
 
-  _getContent(isLoading) {
+  _getContent() {
     if (this.state.isLoading) {
-      return (
-        <ActivityIndicator
-          style={styles.spinner}
-          size="large"
-        />
-      );
+      return <ActivityIndicator style={styles.spinner} size="large" />;
     } else {
       return (
         <FlatList
@@ -51,6 +52,10 @@ class Search extends Component {
           data={this.state.films}
           keyExtractor={item => item.id.toString()}
           renderItem={({ item }) => <FilmItem film={item} />}
+          onEndReachedThreshold={0.5}
+          onEndReached={() => {
+            console.log('onEndReached');
+          }}
         />
       );
     }
