@@ -27,14 +27,16 @@ class Search extends Component {
     console.log(this.searchedText);
     if (this.searchedText.length > 0) {
       this.setState({ isLoading: true });
-      getFilmsWithSearchText(this.searchedText, this.page + 1).then(data => {
-        this.currentPage = data.page;
-        this.totalPage = data.total_pages;
-        this.setState({
-          films: [...this.state.films, ...data.results],
-          isLoading: false
-        });
-      });
+      getFilmsWithSearchText(this.searchedText, this.currentPage + 1).then(
+        data => {
+          this.currentPage = data.page;
+          this.totalPage = data.total_pages;
+          this.setState({
+            films: [...this.state.films, ...data.results],
+            isLoading: false
+          });
+        }
+      );
     }
   }
 
@@ -42,21 +44,12 @@ class Search extends Component {
     this.searchedText = text;
   }
 
-  _getContent() {
+  _displayLoading() {
     if (this.state.isLoading) {
-      return <ActivityIndicator style={styles.spinner} size="large" />;
-    } else {
       return (
-        <FlatList
-          style={styles.flatlist}
-          data={this.state.films}
-          keyExtractor={item => item.id.toString()}
-          renderItem={({ item }) => <FilmItem film={item} />}
-          onEndReachedThreshold={0.5}
-          onEndReached={() => {
-            console.log('onEndReached');
-          }}
-        />
+        <View style={styles.loading_container}>
+          <ActivityIndicator size="large" />
+        </View>
       );
     }
   }
@@ -77,7 +70,19 @@ class Search extends Component {
         </View>
 
         <View style={styles.content}>
-          {this._getContent(this.state.isLoading)}
+          <FlatList
+            style={styles.flatlist}
+            data={this.state.films}
+            keyExtractor={item => item.id.toString()}
+            renderItem={({ item }) => <FilmItem film={item} />}
+            onEndReachedThreshold={0.5}
+            onEndReached={() => {
+              if (this.currentPage < this.totalPage) {
+                this._loadFilms();
+              }
+            }}
+          />
+          {this._displayLoading()}
         </View>
       </View>
     );
@@ -104,8 +109,14 @@ const styles = StyleSheet.create({
     paddingLeft: 5
   },
   flatlist: {},
-  spinner: {
-    flex: 1
+  loading_container: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 20,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });
 
