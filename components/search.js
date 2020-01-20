@@ -1,27 +1,54 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, TextInput, Button, FlatList, Text } from 'react-native';
-import films from './../helpers/filmsData';
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  Button,
+  FlatList,
+  Text
+} from 'react-native';
 import FilmItem from './filmItem';
-import Constants from 'expo-constants';
+import { getFilmsWithSearchText } from './../api/tmdbAPI';
 
 class Search extends Component {
-  constructor() {
-    return super();
+  constructor(props) {
+    super(props);
+    this.searchedText = '';
+    this.state = {
+      films: []
+    };
   }
+
+  _loadFilms() {
+    console.log(this.searchedText);
+    if (this.searchedText.length > 0) {
+      getFilmsWithSearchText(this.searchedText).then(data => {
+        this.setState({ films: data.results });
+      });
+    }
+  }
+
+  _searchTextInputChanged(text) {
+    this.searchedText = text;
+  }
+
   render() {
+    console.log('RENDER');
+    
     return (
       <View style={styles.mainContainer}>
         <TextInput
-          style={styles.textInput }
+          style={styles.textInput}
           placeholder="Titre du film"
+          onChangeText={text => this._searchTextInputChanged(text)}
         />
-        <Button title="Rechercher" onPress={() => {}} />
+        <Button title="Rechercher" onPress={() => this._loadFilms()} />
         <FlatList
           style={styles.flatlist}
-          data={films}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({item}) => <FilmItem />}
-          />
+          data={this.state.films}
+          keyExtractor={item => item.id.toString()}
+          renderItem={({ item }) => <FilmItem film={item} />}
+        />
       </View>
     );
   }
@@ -40,9 +67,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingLeft: 5
   },
-  flatlist: {
-
-  }
-})
+  flatlist: {}
+});
 
 export default Search;
