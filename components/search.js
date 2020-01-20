@@ -5,7 +5,8 @@ import {
   TextInput,
   Button,
   FlatList,
-  Text
+  Text,
+  ActivityIndicator
 } from 'react-native';
 import FilmItem from './filmItem';
 import { getFilmsWithSearchText } from './../api/tmdbAPI';
@@ -15,15 +16,18 @@ class Search extends Component {
     super(props);
     this.searchedText = '';
     this.state = {
-      films: []
+      films: [],
+      isLoading: false
     };
+    let content;
   }
 
   _loadFilms() {
     console.log(this.searchedText);
     if (this.searchedText.length > 0) {
+      this.setState({ isLoading: true });
       getFilmsWithSearchText(this.searchedText).then(data => {
-        this.setState({ films: data.results });
+        this.setState({ films: data.results, isLoading: false });
       });
     }
   }
@@ -32,24 +36,44 @@ class Search extends Component {
     this.searchedText = text;
   }
 
-  render() {
-    console.log('RENDER');
-
-    return (
-      <View style={styles.mainContainer}>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Titre du film"
-          onChangeText={text => this._searchTextInputChanged(text)}
-          onSubmitEditing={() => this._loadFilms()}
+  _getContent(isLoading) {
+    if (this.state.isLoading) {
+      return (
+        <ActivityIndicator
+          style={styles.spinner}
+          size="large"
         />
-        <Button title="Rechercher" onPress={() => this._loadFilms()} />
+      );
+    } else {
+      return (
         <FlatList
           style={styles.flatlist}
           data={this.state.films}
           keyExtractor={item => item.id.toString()}
           renderItem={({ item }) => <FilmItem film={item} />}
         />
+      );
+    }
+  }
+
+  render() {
+    console.log('RENDER');
+
+    return (
+      <View style={styles.mainContainer}>
+        <View style={styles.header}>
+          <TextInput
+            style={styles.textInput}
+            placeholder="Titre du film"
+            onChangeText={text => this._searchTextInputChanged(text)}
+            onSubmitEditing={() => this._loadFilms()}
+          />
+          <Button title="Rechercher" onPress={() => this._loadFilms()} />
+        </View>
+
+        <View style={styles.content}>
+          {this._getContent(this.state.isLoading)}
+        </View>
       </View>
     );
   }
@@ -60,6 +84,12 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 30
   },
+  header: {
+    // flex: 2
+  },
+  content: {
+    flex: 1
+  },
   textInput: {
     marginLeft: 5,
     marginRight: 5,
@@ -68,7 +98,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingLeft: 5
   },
-  flatlist: {}
+  flatlist: {},
+  spinner: {
+    flex: 1
+  }
 });
 
 export default Search;
