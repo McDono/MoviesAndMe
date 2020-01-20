@@ -34,13 +34,14 @@ class Search extends Component {
 
   render() {
     console.log('RENDER');
-    
+
     return (
       <View style={styles.mainContainer}>
         <TextInput
           style={styles.textInput}
           placeholder="Titre du film"
           onChangeText={text => this._searchTextInputChanged(text)}
+          onSubmitEditing={() => this._loadFilms()}
         />
         <Button title="Rechercher" onPress={() => this._loadFilms()} />
         <FlatList
