@@ -8,7 +8,7 @@ class FilmItem extends Component {
     this.state = {};
   }
   render() {
-    const film = this.props.film;
+    const {film, displayFilmDetail} = this.props;
 
     return (
       <View style={styles.main_container}>

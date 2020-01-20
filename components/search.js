@@ -40,6 +40,17 @@ class Search extends Component {
     }
   }
 
+  _searchFilms() {
+    this.currentPage = 0;
+    this.totalPage = 0;
+    this.setState({ films: [] }, () => {
+      console.log(
+        `currentPage: ${this.currentPage} / totalPage: ${this.totalPage} / Nombre de films: ${this.state.films.length}`
+      );
+      this._loadFilms();
+    });
+  }
+
   _searchTextInputChanged(text) {
     this.searchedText = text;
   }
@@ -54,6 +65,10 @@ class Search extends Component {
     }
   }
 
+  _displayFilmDetail = idFilm => {
+    console.log('Display film with id ' + idFilm);
+  };
+
   render() {
     console.log('RENDER');
 
@@ -64,9 +79,9 @@ class Search extends Component {
             style={styles.textInput}
             placeholder="Titre du film"
             onChangeText={text => this._searchTextInputChanged(text)}
-            onSubmitEditing={() => this._loadFilms()}
+            onSubmitEditing={() => this._searchFilms()}
           />
-          <Button title="Rechercher" onPress={() => this._loadFilms()} />
+          <Button title="Rechercher" onPress={() => this._searchFilms()} />
         </View>
 
         <View style={styles.content}>
@@ -74,7 +89,12 @@ class Search extends Component {
             style={styles.flatlist}
             data={this.state.films}
             keyExtractor={item => item.id.toString()}
-            renderItem={({ item }) => <FilmItem film={item} />}
+            renderItem={({ item }) => (
+              <FilmItem
+                film={item}
+                _displayFilmDetail={this._displayFilmDetail}
+              />
+            )}
             onEndReachedThreshold={0.5}
             onEndReached={() => {
               if (this.currentPage < this.totalPage) {
@@ -91,8 +111,7 @@ class Search extends Component {
 
 const styles = StyleSheet.create({
   mainContainer: {
-    flex: 1,
-    marginTop: 30
+    flex: 1
   },
   header: {
     // flex: 2
