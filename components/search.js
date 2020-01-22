@@ -67,10 +67,12 @@ class Search extends Component {
 
   _displayFilmDetail = idFilm => {
     console.log('Display film with id ' + idFilm);
+    this.props.navigation.navigate('FilmDetail', { idFilm: idFilm });
   };
 
   render() {
     console.log('RENDER');
+    // console.log(this.props);
 
     return (
       <View style={styles.mainContainer}>
@@ -92,7 +94,7 @@ class Search extends Component {
             renderItem={({ item }) => (
               <FilmItem
                 film={item}
-                _displayFilmDetail={this._displayFilmDetail}
+                displayFilmDetail={this._displayFilmDetail}
               />
             )}
             onEndReachedThreshold={0.5}

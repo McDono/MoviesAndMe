@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text, Image } from 'react-native';
 import { getImage } from '../api/tmdbAPI';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 class FilmItem extends Component {
   constructor(props) {
@@ -8,10 +9,13 @@ class FilmItem extends Component {
     this.state = {};
   }
   render() {
-    const {film, displayFilmDetail} = this.props;
+    const { film, displayFilmDetail } = this.props;
 
     return (
-      <View style={styles.main_container}>
+      <TouchableOpacity
+        style={styles.main_container}
+        onPress={() => displayFilmDetail(film.id)}
+      >
         <Image
           style={styles.image}
           source={{ uri: getImage(film.poster_path) }}
@@ -30,7 +34,7 @@ class FilmItem extends Component {
             <Text style={styles.date_text}>{film.realase_date}</Text>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   }
 }
