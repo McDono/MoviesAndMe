@@ -31,7 +31,7 @@ class FilmItem extends Component {
             </Text>
           </View>
           <View style={styles.date_container}>
-            <Text style={styles.date_text}>{film.realase_date}</Text>
+            <Text style={styles.date_text}>{film.release_date}</Text>
           </View>
         </View>
       </TouchableOpacity>

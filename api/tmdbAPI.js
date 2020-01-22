@@ -21,3 +21,16 @@ export function getFilmsWithSearchText(text, page) {
 export function getImage(name) {
   return 'https://image.tmdb.org/t/p/w500' + name;
 }
+
+export function getFilmDetail(id) {
+  const url =
+    'https://api.themoviedb.org/3/movie/' +
+    id +
+    '?api_key=' +
+    API_TOKEN +
+    '&language=fr';
+  // console.log(url);
+  return fetch(url)
+    .then(response => response.json())
+    .catch(error => console.error(error));
+}
